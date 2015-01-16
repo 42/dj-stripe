@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from decimal import Decimal
 import datetime
 import decimal
 import json
@@ -307,6 +308,32 @@ class Transfer(StripeObject):
             obj.save()
         if event.kind == "transfer.updated":
             obj.update_status()
+
+
+class ManualTransfer(TimeStampedModel):
+    """
+    Stores the manual transfers to user processed by operator
+    """
+    NOT_PROCESSED, PROCESSING, SUCCESS, DECLINED = xrange(4)
+
+    STATUS_CHOICES = (
+        (NOT_PROCESSED, 'Not Processed'),
+        (PROCESSING, 'Processing'),
+        (SUCCESS, 'Success'),
+        (DECLINED, 'Declined'),
+    )
+
+    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+                             related_name='stripe_manual_transfers')
+    amount_money = models.DecimalField(max_digits=16, decimal_places=8,
+                                       default=Decimal("0.0"))
+    money_currency = models.CharField(max_length=30, null=True)
+    amount_btc = models.DecimalField(max_digits=16, decimal_places=8,
+                                     default=Decimal("0.0"))
+    wallet_transaction_id = models.PositiveIntegerField(null=False)
+    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES,
+                                              default=NOT_PROCESSED)
+    card_num = models.CharField(max_length=16, null=False)
 
 
 class TransferChargeFee(TimeStampedModel):
