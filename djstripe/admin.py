@@ -343,7 +343,7 @@ admin.site.register(
         "money_currency",
         "amount_btc",
         "status",
-        "modfified"
+        "modified"
     ],
     list_filter=[
         "card_kind",
