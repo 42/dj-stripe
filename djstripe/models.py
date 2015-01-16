@@ -323,8 +323,9 @@ class ManualTransfer(TimeStampedModel):
         (DECLINED, 'Declined'),
     )
 
-    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
-                             related_name='stripe_manual_transfers')
+    customer = models.ForeignKey('Customer',
+                                 related_name='manual_transfers')
+    card_num = models.CharField(max_length=16, null=False)
     amount_money = models.DecimalField(max_digits=16, decimal_places=8,
                                        default=Decimal("0.0"))
     money_currency = models.CharField(max_length=30, null=True)
@@ -333,7 +334,6 @@ class ManualTransfer(TimeStampedModel):
     wallet_transaction_id = models.PositiveIntegerField(null=False)
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES,
                                               default=NOT_PROCESSED)
-    card_num = models.CharField(max_length=16, null=False)
 
 
 class TransferChargeFee(TimeStampedModel):
@@ -620,6 +620,14 @@ class Customer(StripeObject):
     def record_charge(self, charge_id):
         data = stripe.Charge.retrieve(charge_id)
         return Charge.sync_from_stripe_data(data)
+
+    # def create_manual_transfer(self, card_num, amount_money, money_currency,
+    #                            amount_btc, wallet_transaction_id,
+    #                            status=ManualTransfer.NOT_PROCESSED):
+    #     """
+    #
+    #     """
+    #     pass
 
 
 class CurrentSubscription(TimeStampedModel):

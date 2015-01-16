@@ -8,7 +8,8 @@ from django.contrib import admin
 from django.db.models.fields import FieldDoesNotExist
 
 from .models import Event, EventProcessingException, Transfer, Charge, Plan
-from .models import Invoice, InvoiceItem, CurrentSubscription, Customer
+from .models import Invoice, InvoiceItem, CurrentSubscription, Customer, \
+    ManualTransfer
 
 from .settings import User
 
@@ -320,3 +321,35 @@ class PlanAdmin(admin.ModelAdmin):
         return readonly_fields
 
 admin.site.register(Plan, PlanAdmin)
+
+admin.site.register(
+    ManualTransfer,
+    raw_id_fields=["event"],
+    readonly_fields=(
+        'created',
+        'customer',
+        'card_num',
+        'amount_money',
+        'money_currency',
+        'amount_btc',
+        'wallet_transaction_id',
+    ),
+    list_display=[
+        "id",
+        "created",
+        customer_user,
+        "card_num",
+        "amount_money",
+        "money_currency",
+        "amount_btc",
+        "status",
+        "modfified"
+    ],
+    list_filter=[
+        "card_kind",
+        "status",
+    ],
+    search_fields=[
+        "status",
+    ] + user_search_fields
+)
