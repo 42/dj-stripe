@@ -324,7 +324,7 @@ admin.site.register(Plan, PlanAdmin)
 
 admin.site.register(
     ManualTransfer,
-    raw_id_fields=["event"],
+    # raw_id_fields=["event"],
     readonly_fields=(
         'created',
         'customer',
@@ -346,7 +346,7 @@ admin.site.register(
         "modified"
     ],
     list_filter=[
-        "card_kind",
+        "customer__card_kind",
         "status",
     ],
     search_fields=[
