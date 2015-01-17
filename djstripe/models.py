@@ -621,14 +621,6 @@ class Customer(StripeObject):
         data = stripe.Charge.retrieve(charge_id)
         return Charge.sync_from_stripe_data(data)
 
-    # def create_manual_transfer(self, card_num, amount_money, money_currency,
-    #                            amount_btc, wallet_transaction_id,
-    #                            status=ManualTransfer.NOT_PROCESSED):
-    #     """
-    #
-    #     """
-    #     pass
-
 
 class CurrentSubscription(TimeStampedModel):
 
